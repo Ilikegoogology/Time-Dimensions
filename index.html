@@ -55,6 +55,7 @@
     
     <div id="optionsTab">
         <button id="showOptions">Options</button>
+        <button id="switchNotation">Switch Notation</button>
     </div>
     <div id="options" class="hidden">
         <h2>Options</h2>
@@ -122,11 +123,12 @@
 
         let automateInterval;
         let saveTimer;
-        let notation = 'scientific';
+        let notationIndex = 0;
+        const notations = ['scientific', 'engineering', 'logarithmic', 'bigCrunch', 'mixedScientific', 'mixedEngineering', 'mixedLogarithmic'];
 
         function updateTimeDisplay() {
             let displayTime;
-            switch (notation) {
+            switch (notations[notationIndex]) {
                 case 'scientific':
                     displayTime = time.toExponential();
                     break;
@@ -215,7 +217,8 @@
                     updateTimeDisplay();
                 });
 
-                startSaving(); // Start the save timer
+                // Update achievements
+                checkAchievements();
             } else if (time < automateThreshold) {
                 alert("You need at least " + automateThreshold.toExponential() + " time to unlock automation.");
             }
@@ -257,8 +260,13 @@
             achievementsDiv.classList.toggle('hidden');
         });
 
+        document.getElementById('switchNotation').addEventListener('click', () => {
+            notationIndex = (notationIndex + 1) % notations.length;
+            updateTimeDisplay();
+        });
+
         document.getElementById('notationSelect').addEventListener('change', (event) => {
-            notation = event.target.value;
+            notationIndex = notations.indexOf(event.target.value);
             updateTimeDisplay();
         });
 
