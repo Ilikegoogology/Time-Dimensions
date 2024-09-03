@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Dimensions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Time Dimensions</h1>
+    <p>Current Time: <span id="timeValue">0</span> seconds</p>
+    <button id="addPlanckTime">Add 1 Planck Time</button>
+    <button id="automatePlanckTimes">Automate Planck Times</button>
+    <div id="automatedButtons"></div>
+    
+    <script>
+        let time = 0;
+        let automated = false;
+        let automateInterval;
+        
+        document.getElementById('addPlanckTime').addEventListener('click', () => {
+            time += Math.pow(10, -43);
+            document.getElementById('timeValue').textContent = time.toExponential();
+        });
+
+        document.getElementById('automatePlanckTimes').addEventListener('click', () => {
+            if (!automated) {
+                automated = true;
+                document.getElementById('automatePlanckTimes').disabled = true;
+
+                // Start automating Planck Times
+                automateInterval = setInterval(() => {
+                    time += Math.pow(10, -43);
+                    document.getElementById('timeValue').textContent = time.toExponential();
+                }, 1000);
+
+                // Create a new button for adding yoctoseconds
+                const yoctosecondButton = document.createElement('button');
+                yoctosecondButton.textContent = 'Add 1 Yoctosecond';
+                yoctosecondButton.id = 'addYoctosecond';
+                document.getElementById('automatedButtons').appendChild(yoctosecondButton);
+
+                yoctosecondButton.addEventListener('click', () => {
+                    time += Math.pow(10, -24); // Adding 1 yoctosecond
+                    document.getElementById('timeValue').textContent = time.toExponential();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
