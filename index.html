@@ -48,7 +48,7 @@
 </head>
 <body>
     <h1>Time Dimensions</h1>
-    <p>Current Time: <span id="timeValue">0</span> seconds</p>
+    <p>Current Time: <span id="timeValue">0</span> <span id="timeUnit">seconds</span></p>
     <button id="addPlanckTime">Add 1 Planck Time</button>
     <button id="automatePlanckTimes">Automate Planck Times</button>
     <div id="automatedButtons"></div>
@@ -60,13 +60,13 @@
         <h2>Options</h2>
         <h3>Notations</h3>
         <select id="notationSelect">
-            <option>Scientific</option>
-            <option>Engineering</option>
-            <option>Logarithmic</option>
-            <option>Big Crunch</option>
-            <option>Mixed Scientific</option>
-            <option>Mixed Engineering</option>
-            <option>Mixed Logarithmic</option>
+            <option value="scientific">Scientific</option>
+            <option value="engineering">Engineering</option>
+            <option value="logarithmic">Logarithmic</option>
+            <option value="bigCrunch">Big Crunch</option>
+            <option value="mixedScientific">Mixed Scientific</option>
+            <option value="mixedEngineering">Mixed Engineering</option>
+            <option value="mixedLogarithmic">Mixed Logarithmic</option>
         </select>
         <h3>Save Options</h3>
         <button id="importSave">Import Save</button>
@@ -121,10 +121,50 @@
 
         let automateInterval;
         let saveTimer;
+        let notation = 'scientific';
 
         function updateTimeDisplay() {
-            document.getElementById('timeValue').textContent = time.toExponential();
+            let displayTime;
+            switch (notation) {
+                case 'scientific':
+                    displayTime = time.toExponential();
+                    break;
+                case 'engineering':
+                    displayTime = toEngineeringNotation(time);
+                    break;
+                case 'logarithmic':
+                    displayTime = toLogarithmicNotation(time);
+                    break;
+                case 'bigCrunch':
+                    displayTime = toBigCrunchNotation(time);
+                    break;
+                case 'mixedScientific':
+                    displayTime = toBigCrunchNotation(time) + ' (Scientific: ' + time.toExponential() + ')';
+                    break;
+                case 'mixedEngineering':
+                    displayTime = toBigCrunchNotation(time) + ' (Engineering: ' + toEngineeringNotation(time) + ')';
+                    break;
+                case 'mixedLogarithmic':
+                    displayTime = toBigCrunchNotation(time) + ' (Logarithmic: ' + toLogarithmicNotation(time) + ')';
+                    break;
+                default:
+                    displayTime = time.toExponential();
+            }
+            document.getElementById('timeValue').textContent = displayTime;
             checkAchievements();
+        }
+
+        function toEngineeringNotation(value) {
+            const e = Math.floor(Math.log10(value) / 3) * 3;
+            return (value / Math.pow(10, e)).toFixed(2) + 'e' + e;
+        }
+
+        function toLogarithmicNotation(value) {
+            return 'log(' + value.toExponential() + ')';
+        }
+
+        function toBigCrunchNotation(value) {
+            return (value * 1e+21).toFixed(2) + '%<sub>ξ</sub>';
         }
 
         function startSaving() {
@@ -218,6 +258,14 @@
             const achievementsDiv = document.getElementById('achievements');
             achievementsDiv.classList.toggle('hidden');
         });
+
+        document.getElementById('notationSelect').addEventListener('change', (event) => {
+            notation = event.target.value;
+            updateTimeDisplay();
+        });
+
+        // Initialize save timer
+        startSaving();
     </script>
 </body>
 </html>
