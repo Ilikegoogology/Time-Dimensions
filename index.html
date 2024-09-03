@@ -15,6 +15,9 @@
             margin: 10px;
             font-size: 16px;
         }
+        #automatedButtons {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -27,23 +30,30 @@
     <script>
         let time = 0;
         let automated = false;
-        let automateInterval;
+        const automateThreshold = 4.729273732829837289384e-41;
+        const planckTimeIncrement = Math.pow(10, -43);
+        const yoctosecondIncrement = Math.pow(10, -24);
+        const nanosecondInterval = 1e-9; // 1 nanosecond
         
-        document.getElementById('addPlanckTime').addEventListener('click', () => {
-            time += Math.pow(10, -43);
+        function updateTimeDisplay() {
             document.getElementById('timeValue').textContent = time.toExponential();
+        }
+
+        document.getElementById('addPlanckTime').addEventListener('click', () => {
+            time += planckTimeIncrement;
+            updateTimeDisplay();
         });
 
         document.getElementById('automatePlanckTimes').addEventListener('click', () => {
-            if (!automated) {
+            if (!automated && time >= automateThreshold) {
                 automated = true;
                 document.getElementById('automatePlanckTimes').disabled = true;
 
                 // Start automating Planck Times
-                automateInterval = setInterval(() => {
-                    time += Math.pow(10, -43);
-                    document.getElementById('timeValue').textContent = time.toExponential();
-                }, 1000);
+                setInterval(() => {
+                    time += planckTimeIncrement;
+                    updateTimeDisplay();
+                }, nanosecondInterval * 1e6); // Convert nanoseconds to milliseconds
 
                 // Create a new button for adding yoctoseconds
                 const yoctosecondButton = document.createElement('button');
@@ -52,9 +62,11 @@
                 document.getElementById('automatedButtons').appendChild(yoctosecondButton);
 
                 yoctosecondButton.addEventListener('click', () => {
-                    time += Math.pow(10, -24); // Adding 1 yoctosecond
-                    document.getElementById('timeValue').textContent = time.toExponential();
+                    time += yoctosecondIncrement;
+                    updateTimeDisplay();
                 });
+            } else if (!automated) {
+                alert("You need at least " + automateThreshold.toExponential() + " time to unlock automation.");
             }
         });
     </script>
