@@ -15,7 +15,7 @@
             margin: 10px;
             font-size: 16px;
         }
-        #automatedButtons, #optionsTab, #options, #achievementsTab, #achievements {
+        #automatedButtons, #optionsTab, #options, #achievementsTab, #achievements, #timeUnitSelect {
             margin-top: 20px;
         }
         .hidden {
@@ -48,7 +48,7 @@
 </head>
 <body>
     <h1>Time Dimensions</h1>
-    <p>Current Time: <span id="timeValue">0</span> <span id="timeUnit">seconds</span></p>
+    <p>Current Time: <span id="timeValue">0</span> <span id="timeUnit">Planck Times</span></p>
     <button id="addPlanckTime">Add 1 Planck Time</button>
     <button id="automatePlanckTimes">Automate Planck Times</button>
     <div id="automatedButtons"></div>
@@ -111,6 +111,32 @@
         </div>
     </div>
     
+    <div id="timeUnitSelect">
+        <h3>Select Time Unit (Measurement Notation)</h3>
+        <select id="timeUnitDropdown">
+            <option value="1e-43">Planck Time</option>
+            <option value="1e-30">Quectosecond</option>
+            <option value="1e-27">Rontosecond</option>
+            <option value="1e-24">Yoctosecond</option>
+            <option value="1e-21">Zectosecond</option>
+            <option value="1e-18">Attosecond</option>
+            <option value="1e-15">Femtosecond</option>
+            <option value="1e-12">Picosecond</option>
+            <option value="1e-9">Nanosecond</option>
+            <option value="1e-6">Microsecond</option>
+            <option value="1e-3">Millisecond</option>
+            <option value="1">Second</option>
+            <option value="60">Minute</option>
+            <option value="3600">Hour</option>
+            <option value="86400">Day</option>
+            <option value="2.628e6">Month</option>
+            <option value="3.154e7">Year</option>
+            <option value="3.154e10">Decade</option>
+            <option value="3.154e11">Century</option>
+            <option value="3.154e12">Millennium</option>
+        </select>
+    </div>
+
     <script>
         let time = 0;
         let automated = false;
@@ -126,155 +152,134 @@
         let saveTimer;
         let notationIndex = 0;
         const notations = ['scientific', 'engineering', 'logarithmic', 'bigCrunch', 'mixedScientific', 'mixedEngineering', 'mixedLogarithmic', 'measurement'];
+        const timeUnits = {
+            '1e-43': 'Planck Time',
+            '1e-30': 'Quectosecond',
+            '1e-27': 'Rontosecond',
+            '1e-24': 'Yoctosecond',
+            '1e-21': 'Zectosecond',
+            '1e-18': 'Attosecond',
+            '1e-15': 'Femtosecond',
+            '1e-12': 'Picosecond',
+            '1e-9': 'Nanosecond',
+            '1e-6': 'Microsecond',
+            '1e-3': 'Millisecond',
+            '1': 'Second',
+            '60': 'Minute',
+            '3600': 'Hour',
+            '86400': 'Day',
+            '2.628e6': 'Month',
+            '3.154e7': 'Year',
+            '3.154e10': 'Decade',
+            '3.154e11': 'Century',
+            '3.154e12': 'Millennium'
+        };
 
         function updateTimeDisplay() {
             let displayTime;
+            const selectedUnit = document.getElementById('timeUnitDropdown').value;
             switch (notations[notationIndex]) {
                 case 'scientific':
-                    displayTime = time.toExponential();
+                    displayTime = (time / selectedUnit).toExponential();
                     break;
                 case 'engineering':
-                    displayTime = toEngineeringNotation(time);
+                    displayTime = toEngineeringNotation(time / selectedUnit);
                     break;
                 case 'logarithmic':
-                    displayTime = toLogarithmicNotation(time);
+                    displayTime = toLogarithmicNotation(time / selectedUnit);
                     break;
                 case 'bigCrunch':
                     displayTime = time >= infinityThreshold ? 'eee56' : 'Unlock Infinity to see Big Crunch';
                     break;
                 case 'mixedScientific':
-                    displayTime = time >= infinityThreshold ? 'eee56 (Scientific: ' + time.toExponential() + ')' : 'Unlock Infinity to see Big Crunch (Scientific: ' + time.toExponential() + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Scientific: ' + (time / selectedUnit).toExponential() + ')' : 'Unlock Infinity to see Big Crunch (Scientific: ' + (time / selectedUnit).toExponential() + ')';
                     break;
                 case 'mixedEngineering':
-                    displayTime = time >= infinityThreshold ? 'eee56 (Engineering: ' + toEngineeringNotation(time) + ')' : 'Unlock Infinity to see Big Crunch (Engineering: ' + toEngineeringNotation(time) + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Engineering: ' + toEngineeringNotation(time / selectedUnit) + ')' : 'Unlock Infinity to see Big Crunch (Engineering: ' + toEngineeringNotation(time / selectedUnit) + ')';
                     break;
                 case 'mixedLogarithmic':
-                    displayTime = time >= infinityThreshold ? 'eee56 (Logarithmic: ' + toLogarithmicNotation(time) + ')' : 'Unlock Infinity to see Big Crunch (Logarithmic: ' + toLogarithmicNotation(time) + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Logarithmic: ' + toLogarithmicNotation(time / selectedUnit) + ')' : 'Unlock Infinity to see Big Crunch (Logarithmic: ' + toLogarithmicNotation(time / selectedUnit) + ')';
                     break;
                 case 'measurement':
-                    displayTime = time >= 999 * yoctosecondIncrement ? (999 * yoctosecondIncrement).toFixed(2) + ' seconds' : time.toFixed(2) + ' seconds';
+                    displayTime = (time / selectedUnit) + ' ' + timeUnits[selectedUnit];
                     break;
-                default:
-                    displayTime = time.toExponential();
             }
-            document.getElementById('timeValue').textContent = displayTime;
-            checkAchievements();
+            document.getElementById('timeValue').innerText = displayTime;
         }
 
         function toEngineeringNotation(value) {
-            const e = Math.floor(Math.log10(value) / 3) * 3;
-            const coefficient = value / Math.pow(10, e);
-            return coefficient.toFixed(2) + 'e' + e;
+            if (value === 0) return '0';
+            const exponent = Math.floor(Math.log10(value) / 3) * 3;
+            const mantissa = value / Math.pow(10, exponent);
+            return mantissa.toFixed(2) + 'e' + exponent;
         }
 
         function toLogarithmicNotation(value) {
-            return 'log(' + value.toExponential() + ')';
+            return value > 0 ? 'log(' + value.toFixed(2) + ')' : 'undefined';
         }
 
-        function startSaving() {
-            clearInterval(saveTimer);
-            saveTimer = setInterval(() => {
-                // Implement your save logic here
-                console.log("Game saved.");
-            }, saveInterval);
-        }
+        document.getElementById('timeUnitDropdown').addEventListener('change', updateTimeDisplay);
 
-        function checkAchievements() {
-            if (time >= planckTimeIncrement && !document.getElementById('achievement1').classList.contains('achieved')) {
-                document.getElementById('achievement1').classList.add('achieved');
-            }
-            if (automated && !document.getElementById('achievement2').classList.contains('achieved')) {
-                document.getElementById('achievement2').classList.add('achieved');
-            }
-            if (time >= 4e-23 && !document.getElementById('achievement3').classList.contains('achieved')) {
-                document.getElementById('achievement3').classList.add('achieved');
-            }
-            if (yoctosecondIncrement >= 999 * Math.pow(10, -24) && !document.getElementById('achievement4').classList.contains('achieved')) {
-                document.getElementById('achievement4').classList.add('achieved');
-            }
-        }
-
-        document.getElementById('addPlanckTime').addEventListener('click', () => {
+        document.getElementById('addPlanckTime').addEventListener('click', function() {
             time += planckTimeIncrement;
             updateTimeDisplay();
         });
 
-        document.getElementById('automatePlanckTimes').addEventListener('click', () => {
-            if (!automated && time >= automateThreshold) {
-                automated = true;
-                document.getElementById('automatePlanckTimes').disabled = true;
-
-                // Start automating Planck Times
-                automateInterval = setInterval(() => {
-                    time += automationRate * planckTimeIncrement;
-                    updateTimeDisplay();
-                }, nanosecondInterval * 1e6); // Convert nanoseconds to milliseconds
-
-                // Add Yoctosecond Button
-                const yoctosecondButton = document.createElement('button');
-                yoctosecondButton.textContent = 'Add 1 Yoctosecond';
-                document.getElementById('automatedButtons').appendChild(yoctosecondButton);
-
-                yoctosecondButton.addEventListener('click', () => {
-                    time += yoctosecondIncrement;
-                    updateTimeDisplay();
-                });
-
-                // Update achievements
-                checkAchievements();
-            } else if (time < automateThreshold) {
-                alert("You need at least " + automateThreshold.toExponential() + " time to unlock automation.");
-            }
-        });
-
-        document.getElementById('showOptions').addEventListener('click', () => {
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.classList.toggle('hidden');
-        });
-
-        document.getElementById('updateRate').addEventListener('change', (event) => {
-            const rate = parseInt(event.target.value, 10);
+        document.getElementById('automatePlanckTimes').addEventListener('click', function() {
+            automated = !automated;
             if (automated) {
-                clearInterval(automateInterval);
-                automateInterval = setInterval(() => {
-                    time += automationRate * planckTimeIncrement;
+                automateInterval = setInterval(function() {
+                    time += automationRate * nanosecondInterval;
                     updateTimeDisplay();
-                }, rate);
+                }, nanosecondInterval * 1000); // Convert nanoseconds to milliseconds
+            } else {
+                clearInterval(automateInterval);
             }
         });
 
-        document.getElementById('importSave').addEventListener('click', () => {
-            // Implement import save logic
-            console.log("Import save.");
+        document.getElementById('showOptions').addEventListener('click', function() {
+            document.getElementById('options').classList.toggle('hidden');
         });
 
-        document.getElementById('exportSave').addEventListener('click', () => {
-            // Implement export save logic
-            console.log("Export save.");
+        document.getElementById('showAchievements').addEventListener('click', function() {
+            document.getElementById('achievements').classList.toggle('hidden');
         });
 
-        document.getElementById('save').addEventListener('click', () => {
-            // Implement save logic
-            console.log("Save.");
-        });
-
-        document.getElementById('showAchievements').addEventListener('click', () => {
-            const achievementsDiv = document.getElementById('achievements');
-            achievementsDiv.classList.toggle('hidden');
-        });
-
-        document.getElementById('switchNotation').addEventListener('click', () => {
-            notationIndex = (notationIndex + 1) % notations.length;
+        document.getElementById('notationSelect').addEventListener('change', function() {
+            notationIndex = this.selectedIndex;
             updateTimeDisplay();
         });
 
-        document.getElementById('notationSelect').addEventListener('change', (event) => {
-            notationIndex = notations.indexOf(event.target.value);
-            updateTimeDisplay();
+        document.getElementById('save').addEventListener('click', function() {
+            localStorage.setItem('timeDimensionsSave', JSON.stringify({ time, automated }));
         });
 
-        // Initialize save timer
-        startSaving();
+        document.getElementById('importSave').addEventListener('click', function() {
+            const save = JSON.parse(localStorage.getItem('timeDimensionsSave'));
+            if (save) {
+                time = save.time;
+                automated = save.automated;
+                updateTimeDisplay();
+            }
+        });
+
+        document.getElementById('exportSave').addEventListener('click', function() {
+            const blob = new Blob([JSON.stringify({ time, automated })], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'timeDimensionsSave.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        function autoSave() {
+            saveTimer = setInterval(function() {
+                document.getElementById('save').click();
+            }, saveInterval);
+        }
+
+        autoSave();
     </script>
 </body>
 </html>
