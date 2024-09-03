@@ -68,6 +68,7 @@
             <option value="mixedScientific">Mixed Scientific</option>
             <option value="mixedEngineering">Mixed Engineering</option>
             <option value="mixedLogarithmic">Mixed Logarithmic</option>
+            <option value="measurement">Measurement</option>
         </select>
         <h3>Save Options</h3>
         <button id="importSave">Import Save</button>
@@ -124,7 +125,7 @@
         let automateInterval;
         let saveTimer;
         let notationIndex = 0;
-        const notations = ['scientific', 'engineering', 'logarithmic', 'bigCrunch', 'mixedScientific', 'mixedEngineering', 'mixedLogarithmic'];
+        const notations = ['scientific', 'engineering', 'logarithmic', 'bigCrunch', 'mixedScientific', 'mixedEngineering', 'mixedLogarithmic', 'measurement'];
 
         function updateTimeDisplay() {
             let displayTime;
@@ -149,6 +150,9 @@
                     break;
                 case 'mixedLogarithmic':
                     displayTime = time >= infinityThreshold ? 'eee56 (Logarithmic: ' + toLogarithmicNotation(time) + ')' : 'Unlock Infinity to see Big Crunch (Logarithmic: ' + toLogarithmicNotation(time) + ')';
+                    break;
+                case 'measurement':
+                    displayTime = time >= 999 * yoctosecondIncrement ? (999 * yoctosecondIncrement).toFixed(2) + ' seconds' : time.toFixed(2) + ' seconds';
                     break;
                 default:
                     displayTime = time.toExponential();
@@ -206,10 +210,9 @@
                     updateTimeDisplay();
                 }, nanosecondInterval * 1e6); // Convert nanoseconds to milliseconds
 
-                // Create a new button for adding yoctoseconds
+                // Add Yoctosecond Button
                 const yoctosecondButton = document.createElement('button');
                 yoctosecondButton.textContent = 'Add 1 Yoctosecond';
-                yoctosecondButton.id = 'addYoctosecond';
                 document.getElementById('automatedButtons').appendChild(yoctosecondButton);
 
                 yoctosecondButton.addEventListener('click', () => {
