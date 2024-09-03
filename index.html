@@ -118,6 +118,7 @@
         const automationRate = 7e5; // 700,000 Planck times per nanosecond
         const nanosecondInterval = 1e-9; // 1 nanosecond
         const saveInterval = 30; // Save every 30ms
+        const infinityThreshold = 1e308; // Infinity threshold
 
         let automateInterval;
         let saveTimer;
@@ -136,16 +137,16 @@
                     displayTime = toLogarithmicNotation(time);
                     break;
                 case 'bigCrunch':
-                    displayTime = toBigCrunchNotation(time);
+                    displayTime = time >= infinityThreshold ? 'eee56' : 'Unlock Infinity to see Big Crunch';
                     break;
                 case 'mixedScientific':
-                    displayTime = toBigCrunchNotation(time) + ' (Scientific: ' + time.toExponential() + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Scientific: ' + time.toExponential() + ')' : 'Unlock Infinity to see Big Crunch (Scientific: ' + time.toExponential() + ')';
                     break;
                 case 'mixedEngineering':
-                    displayTime = toBigCrunchNotation(time) + ' (Engineering: ' + toEngineeringNotation(time) + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Engineering: ' + toEngineeringNotation(time) + ')' : 'Unlock Infinity to see Big Crunch (Engineering: ' + toEngineeringNotation(time) + ')';
                     break;
                 case 'mixedLogarithmic':
-                    displayTime = toBigCrunchNotation(time) + ' (Logarithmic: ' + toLogarithmicNotation(time) + ')';
+                    displayTime = time >= infinityThreshold ? 'eee56 (Logarithmic: ' + toLogarithmicNotation(time) + ')' : 'Unlock Infinity to see Big Crunch (Logarithmic: ' + toLogarithmicNotation(time) + ')';
                     break;
                 default:
                     displayTime = time.toExponential();
@@ -156,15 +157,12 @@
 
         function toEngineeringNotation(value) {
             const e = Math.floor(Math.log10(value) / 3) * 3;
-            return (value / Math.pow(10, e)).toFixed(2) + 'e' + e;
+            const coefficient = value / Math.pow(10, e);
+            return coefficient.toFixed(2) + 'e' + e;
         }
 
         function toLogarithmicNotation(value) {
             return 'log(' + value.toExponential() + ')';
-        }
-
-        function toBigCrunchNotation(value) {
-            return (value * 1e+21).toFixed(2) + '%<sub>ξ</sub>';
         }
 
         function startSaving() {
@@ -218,7 +216,7 @@
                 });
 
                 startSaving(); // Start the save timer
-            } else if (!automated) {
+            } else if (time < automateThreshold) {
                 alert("You need at least " + automateThreshold.toExponential() + " time to unlock automation.");
             }
         });
