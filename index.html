@@ -30,10 +30,10 @@
     <script>
         let time = 0;
         let automated = false;
-        const automateThreshold = 4.729273732829837289384e-41;
+        const automateThreshold = 6e-42;
         const planckTimeIncrement = Math.pow(10, -43);
         const yoctosecondIncrement = Math.pow(10, -24);
-        const automationRate = 7e5; // 700,000 Planck times per 100 μs
+        const automationRate = 7e5; // 700,000 Planck times per 100 microsecond
         const microsecondInterval = 1e-4; // 100 microseconds
         
         function updateTimeDisplay() {
