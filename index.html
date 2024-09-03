@@ -18,6 +18,12 @@
         #automatedButtons {
             margin-top: 20px;
         }
+        .hidden {
+            display: none;
+        }
+        #optionsTab, #options {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -27,17 +33,52 @@
     <button id="automatePlanckTimes">Automate Planck Times</button>
     <div id="automatedButtons"></div>
     
+    <div id="optionsTab">
+        <button id="showOptions">Options</button>
+    </div>
+    <div id="options" class="hidden">
+        <h2>Options</h2>
+        <h3>Notations</h3>
+        <select id="notationSelect">
+            <option>Scientific</option>
+            <option>Engineering</option>
+            <option>Logarithmic</option>
+            <option>Big Crunch</option>
+            <option>Mixed Scientific</option>
+            <option>Mixed Engineering</option>
+            <option>Mixed Logarithmic</option>
+        </select>
+        <h3>Save Options</h3>
+        <button id="importSave">Import Save</button>
+        <button id="exportSave">Export Save</button>
+        <button id="save">Save</button>
+        <h3>Update Rate</h3>
+        <input type="number" id="updateRate" min="33" max="1000" step="1" value="1000">
+    </div>
+    
     <script>
         let time = 0;
         let automated = false;
         const automateThreshold = 6e-42;
         const planckTimeIncrement = Math.pow(10, -43);
         const yoctosecondIncrement = Math.pow(10, -24);
-        const automationRate = 7e5; // 700,000 Planck times per 100 microsecond
-        const microsecondInterval = 1e-4; // 100 microseconds
+        const automationRate = 7e5; // 700,000 Planck times per nanosecond
+        const nanosecondInterval = 1e-9; // 1 nanosecond
+        const saveInterval = 30; // Save every 30ms
+        
+        let automateInterval;
+        let saveTimer;
         
         function updateTimeDisplay() {
             document.getElementById('timeValue').textContent = time.toExponential();
+        }
+
+        function startSaving() {
+            clearInterval(saveTimer);
+            saveTimer = setInterval(() => {
+                // Implement your save logic here
+                console.log("Game saved.");
+            }, saveInterval);
         }
 
         document.getElementById('addPlanckTime').addEventListener('click', () => {
@@ -51,10 +92,10 @@
                 document.getElementById('automatePlanckTimes').disabled = true;
 
                 // Start automating Planck Times
-                setInterval(() => {
+                automateInterval = setInterval(() => {
                     time += automationRate * planckTimeIncrement;
                     updateTimeDisplay();
-                }, microsecondInterval * 1e6); // Convert microseconds to milliseconds
+                }, nanosecondInterval * 1e6); // Convert nanoseconds to milliseconds
 
                 // Create a new button for adding yoctoseconds
                 const yoctosecondButton = document.createElement('button');
@@ -66,11 +107,43 @@
                     time += yoctosecondIncrement;
                     updateTimeDisplay();
                 });
+
+                startSaving(); // Start the save timer
             } else if (!automated) {
                 alert("You need at least " + automateThreshold.toExponential() + " time to unlock automation.");
             }
         });
+
+        document.getElementById('showOptions').addEventListener('click', () => {
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.classList.toggle('hidden');
+        });
+
+        document.getElementById('updateRate').addEventListener('change', (event) => {
+            const rate = parseInt(event.target.value, 10);
+            if (automated) {
+                clearInterval(automateInterval);
+                automateInterval = setInterval(() => {
+                    time += automationRate * planckTimeIncrement;
+                    updateTimeDisplay();
+                }, rate);
+            }
+        });
+
+        document.getElementById('importSave').addEventListener('click', () => {
+            // Implement import save logic
+            console.log("Import save.");
+        });
+
+        document.getElementById('exportSave').addEventListener('click', () => {
+            // Implement export save logic
+            console.log("Export save.");
+        });
+
+        document.getElementById('save').addEventListener('click', () => {
+            // Implement save logic
+            console.log("Save.");
+        });
     </script>
 </body>
 </html>
- 
