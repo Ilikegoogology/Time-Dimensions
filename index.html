@@ -33,7 +33,8 @@
         const automateThreshold = 4.729273732829837289384e-41;
         const planckTimeIncrement = Math.pow(10, -43);
         const yoctosecondIncrement = Math.pow(10, -24);
-        const nanosecondInterval = 1e-9; // 1 nanosecond
+        const automationRate = 7e5; // 700,000 Planck times per 100 μs
+        const microsecondInterval = 1e-4; // 100 microseconds
         
         function updateTimeDisplay() {
             document.getElementById('timeValue').textContent = time.toExponential();
@@ -51,9 +52,9 @@
 
                 // Start automating Planck Times
                 setInterval(() => {
-                    time += planckTimeIncrement;
+                    time += automationRate * planckTimeIncrement;
                     updateTimeDisplay();
-                }, nanosecondInterval * 1e6); // Convert nanoseconds to milliseconds
+                }, microsecondInterval * 1e6); // Convert microseconds to milliseconds
 
                 // Create a new button for adding yoctoseconds
                 const yoctosecondButton = document.createElement('button');
@@ -72,3 +73,4 @@
     </script>
 </body>
 </html>
+ 
