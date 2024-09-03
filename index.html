@@ -15,14 +15,14 @@
             margin: 10px;
             font-size: 16px;
         }
-        #automatedButtons {
+        #automatedButtons, #optionsTab, #options, #achievementsTab, #achievements {
             margin-top: 20px;
         }
         .hidden {
             display: none;
         }
-        #optionsTab, #options {
-            margin-top: 20px;
+        .achievement {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -55,6 +55,19 @@
         <h3>Update Rate</h3>
         <input type="number" id="updateRate" min="33" max="1000" step="1" value="1000">
     </div>
+
+    <div id="achievementsTab">
+        <button id="showAchievements">Achievements</button>
+    </div>
+    <div id="achievements" class="hidden">
+        <h2>Achievements</h2>
+        <div id="achievementList">
+            <div class="achievement" id="achievement1">"There is no way" - Get a Planck time</div>
+            <div class="achievement" id="achievement2">"Computing?" - Automate Planck Times</div>
+            <div class="achievement" id="achievement3">"ITS BLUE ITS BLUE IT'S BLUE!!" - Get 4e-23 time</div>
+            <div class="achievement" id="achievement4">"This doesn't exist" - Get 999 Yoctoseconds</div>
+        </div>
+    </div>
     
     <script>
         let time = 0;
@@ -65,12 +78,13 @@
         const automationRate = 7e5; // 700,000 Planck times per nanosecond
         const nanosecondInterval = 1e-9; // 1 nanosecond
         const saveInterval = 30; // Save every 30ms
-        
+
         let automateInterval;
         let saveTimer;
-        
+
         function updateTimeDisplay() {
             document.getElementById('timeValue').textContent = time.toExponential();
+            checkAchievements();
         }
 
         function startSaving() {
@@ -79,6 +93,25 @@
                 // Implement your save logic here
                 console.log("Game saved.");
             }, saveInterval);
+        }
+
+        function checkAchievements() {
+            if (time >= planckTimeIncrement && !document.getElementById('achievement1').classList.contains('achieved')) {
+                document.getElementById('achievement1').classList.add('achieved');
+                document.getElementById('achievement1').textContent += " - Achieved!";
+            }
+            if (automated && !document.getElementById('achievement2').classList.contains('achieved')) {
+                document.getElementById('achievement2').classList.add('achieved');
+                document.getElementById('achievement2').textContent += " - Achieved!";
+            }
+            if (time >= 4e-23 && !document.getElementById('achievement3').classList.contains('achieved')) {
+                document.getElementById('achievement3').classList.add('achieved');
+                document.getElementById('achievement3').textContent += " - Achieved!";
+            }
+            if (yoctosecondIncrement >= 999 * Math.pow(10, -24) && !document.getElementById('achievement4').classList.contains('achieved')) {
+                document.getElementById('achievement4').classList.add('achieved');
+                document.getElementById('achievement4').textContent += " - Achieved!";
+            }
         }
 
         document.getElementById('addPlanckTime').addEventListener('click', () => {
@@ -143,6 +176,11 @@
         document.getElementById('save').addEventListener('click', () => {
             // Implement save logic
             console.log("Save.");
+        });
+
+        document.getElementById('showAchievements').addEventListener('click', () => {
+            const achievementsDiv = document.getElementById('achievements');
+            achievementsDiv.classList.toggle('hidden');
         });
     </script>
 </body>
