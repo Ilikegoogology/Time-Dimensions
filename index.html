@@ -21,8 +21,28 @@
         .hidden {
             display: none;
         }
+        .achievement-box {
+            width: 192px; /* 12 * 16px */
+            height: 256px; /* 16 * 16px */
+            border: 1px solid #000;
+            display: inline-block;
+            vertical-align: top;
+            margin: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            text-align: left;
+        }
         .achievement {
-            margin: 5px 0;
+            background-color: #ccc; /* Default grey background */
+            padding: 10px;
+            border: 1px solid #000;
+            margin-bottom: 10px;
+        }
+        .achieved {
+            background-color: #0f0; /* Green background for achieved */
+        }
+        .achievement-title {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -62,10 +82,30 @@
     <div id="achievements" class="hidden">
         <h2>Achievements</h2>
         <div id="achievementList">
-            <div class="achievement" id="achievement1">"There is no way" - Get a Planck time</div>
-            <div class="achievement" id="achievement2">"Computing?" - Automate Planck Times</div>
-            <div class="achievement" id="achievement3">"ITS BLUE ITS BLUE IT'S BLUE!!" - Get 4e-23 time</div>
-            <div class="achievement" id="achievement4">"This doesn't exist" - Get 999 Yoctoseconds</div>
+            <div class="achievement-box">
+                <div class="achievement" id="achievement1">
+                    <div class="achievement-title">"There is no way"</div>
+                    Get a Planck time
+                </div>
+            </div>
+            <div class="achievement-box">
+                <div class="achievement" id="achievement2">
+                    <div class="achievement-title">"Computing?"</div>
+                    Automate Planck Times
+                </div>
+            </div>
+            <div class="achievement-box">
+                <div class="achievement" id="achievement3">
+                    <div class="achievement-title">"ITS BLUE ITS BLUE IT'S BLUE!!"</div>
+                    Get 4e-23 time
+                </div>
+            </div>
+            <div class="achievement-box">
+                <div class="achievement" id="achievement4">
+                    <div class="achievement-title">"This doesn't exist"</div>
+                    Get 999 Yoctoseconds
+                </div>
+            </div>
         </div>
     </div>
     
@@ -98,19 +138,15 @@
         function checkAchievements() {
             if (time >= planckTimeIncrement && !document.getElementById('achievement1').classList.contains('achieved')) {
                 document.getElementById('achievement1').classList.add('achieved');
-                document.getElementById('achievement1').textContent += " - Achieved!";
             }
             if (automated && !document.getElementById('achievement2').classList.contains('achieved')) {
                 document.getElementById('achievement2').classList.add('achieved');
-                document.getElementById('achievement2').textContent += " - Achieved!";
             }
             if (time >= 4e-23 && !document.getElementById('achievement3').classList.contains('achieved')) {
                 document.getElementById('achievement3').classList.add('achieved');
-                document.getElementById('achievement3').textContent += " - Achieved!";
             }
             if (yoctosecondIncrement >= 999 * Math.pow(10, -24) && !document.getElementById('achievement4').classList.contains('achieved')) {
                 document.getElementById('achievement4').classList.add('achieved');
-                document.getElementById('achievement4').textContent += " - Achieved!";
             }
         }
 
